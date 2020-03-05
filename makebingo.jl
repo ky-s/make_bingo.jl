@@ -18,33 +18,33 @@ function makebingo()
     ]
 
     bingo = map(numbers_arr) do numbers
-
-        shuffle(numbers)[1:5] .|> string
-
-    end
+                shuffle(numbers)[1:5] .|> string
+            end
 
     # center blank
     bingo[3][3] = " "
 
-    # 5-element Array{Array{String,1},1} => 5x5 Array{String,2}
+    # 5-element Array{Array{String,1},1}
+    # => 5x5 Array{String,2}
     hcat(bingo...)
 end
 
+# currying join() that pre-set 2nd argment.
+joinby(delim) = strings -> join(strings, delim)
 
+# formatted for pretty print
 function output(bingo)
     bingo_with_header = [
          "B" "I" "N" "G" "O";
          bingo
     ]
 
-    lines = map(1:6) do n
-        # left padding
-        padded = lpad.(bingo_with_header[n, :], 2)
+    map(1:6) do n
+        row = bingo_with_header[n, :]
 
-        join(padded, " | ")
-    end
+        lpad.(row, 2) |> joinby(" | ")
 
-    join(lines, "\n")
+    end |> joinby("\n")
 end
 
 (output ∘ makebingo)() |> println
